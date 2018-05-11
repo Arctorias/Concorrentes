@@ -91,7 +91,7 @@ int main (int argc, char** argv) {
 
 	// InicializaÃ§Ã£o do aeroporto
 	
-	pthread_t* threads_created[1+t_simulacao/t_novo_aviao_min];
+	pthread_t* created_threads[1+t_simulacao/t_novo_aviao_min];
 	
 	n_args = 8;
 	size_t args[8] = {n_pistas, n_portoes, n_esteiras,
@@ -106,17 +106,18 @@ int main (int argc, char** argv) {
 
     int counter = 0;
 	srand(time(NULL));
-	for (size_t i = 0; i < 2; i++) {
+	for(size_t i = 0; i < 2; i++) {
 		int combustivel = (rand() % ((p_combustivel_max-p_combustivel_min)) + (p_combustivel_min));
 		size_t combustivelAviao = (size_t)(100*(double) combustivel/p_combustivel_max);
 		aviao_t* aviao = aloca_aviao(combustivelAviao, i);
 		pthread_create(&aviao->thread, NULL, planeThread, (void *) aviao);
-		threads_criadas[counter++] = &aviao->thread;
+		created_threads[counter++] = &aviao->thread;
 		usleep(100000*rand() % ((t_novo_aviao_max-t_novo_aviao_min)+t_novo_aviao_min));
 		
 	}
-	for (int i = 0; i < counter; i++) {
-		pthread_join(*threads_criadas[i], NULL);
+	
+	for(int i = 0; i < counter; i++) {
+		pthread_join(*created_threads[i], NULL);
     }
 
 	finalizar_aeroporto(meu_aeroporto);
